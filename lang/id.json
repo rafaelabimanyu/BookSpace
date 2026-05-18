@@ -149,5 +149,15 @@
     "Beri Ulasan": "Beri Ulasan",
     "You can only review books you have borrowed and returned.": "Anda hanya dapat mengulas buku yang sudah dipinjam dan dikembalikan.",
     "Pinjam Buku": "Pinjam Buku",
-    "Close": "Tutup"
+    "Close": "Tutup",
+    "Borrow date cannot be in the past.": "Tanggal pinjam tidak boleh di masa lalu.",
+    "Return date must be strictly after the borrow date.": "Tanggal pengembalian harus setelah tanggal pinjam.",
+    "Rating must be at least 1 star.": "Rating minimal adalah 1 bintang.",
+    "Rating cannot exceed 5 stars.": "Rating maksimal adalah 5 bintang.",
+    "The selected book is invalid.": "Buku yang dipilih tidak valid.",
+    "All rights reserved.": "Hak cipta dilindungi undang-undang.",
+    "About": "Tentang",
+    "Contact": "Kontak",
+    "Made with": "Dibuat dengan",
+    "in BookSpace": "di BookSpace"
 }

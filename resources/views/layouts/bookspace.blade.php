@@ -108,6 +108,33 @@
         <div class="p-8 flex-1">
             @yield('content')
         </div>
+
+        <!-- Global Footer -->
+        <footer class="bg-white/60 backdrop-blur-md border-t border-secondary-blush py-6 px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-semibold text-text-charcoal/70">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                <span class="font-display font-bold text-text-charcoal tracking-wide">BookSpace</span>
+            </div>
+            <div class="text-center text-text-charcoal/60">
+                &copy; {{ date('Y') }} BookSpace. {{ __('All rights reserved.') }}
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-4 text-text-charcoal/60">
+                    <a href="#" class="transition-all duration-300 hover:text-primary-rose">{{ __('About') }}</a>
+                    <span>&middot;</span>
+                    <a href="#" class="transition-all duration-300 hover:text-primary-rose">{{ __('Contact') }}</a>
+                </div>
+                <div class="flex items-center gap-1 text-text-charcoal/50 text-[11px]">
+                    <span>{{ __('Made with') }}</span>
+                    <svg class="w-3.5 h-3.5 text-primary-rose fill-current animate-pulse" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span>{{ __('in BookSpace') }}</span>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <!-- Global Animated Soft-Pink Toasts -->

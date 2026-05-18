@@ -149,5 +149,15 @@
     "Beri Ulasan": "Write Review",
     "You can only review books you have borrowed and returned.": "You can only review books you have borrowed and returned.",
     "Pinjam Buku": "Borrow Book",
-    "Close": "Close"
+    "Close": "Close",
+    "Borrow date cannot be in the past.": "Borrow date cannot be in the past.",
+    "Return date must be strictly after the borrow date.": "Return date must be strictly after the borrow date.",
+    "Rating must be at least 1 star.": "Rating must be at least 1 star.",
+    "Rating cannot exceed 5 stars.": "Rating cannot exceed 5 stars.",
+    "The selected book is invalid.": "The selected book is invalid.",
+    "All rights reserved.": "All rights reserved.",
+    "About": "About",
+    "Contact": "Contact",
+    "Made with": "Made with",
+    "in BookSpace": "in BookSpace"
 }
