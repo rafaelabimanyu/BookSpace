@@ -87,5 +87,15 @@
     "Book returned successfully!": "Book returned successfully!",
     "This book has already been returned.": "This book has already been returned.",
     "An error occurred while processing the borrowing transaction.": "An error occurred while processing the borrowing transaction.",
-    "An error occurred while processing the return transaction.": "An error occurred while processing the return transaction."
+    "An error occurred while processing the return transaction.": "An error occurred while processing the return transaction.",
+    "My Borrowing History": "My Borrowing History",
+    "Search book title or writer...": "Search book title or writer...",
+    "All Categories": "All Categories",
+    "Filter": "Filter",
+    "Search": "Search",
+    "No books found matching your criteria.": "No books found matching your criteria.",
+    "Available": "Available",
+    "Out of Stock": "Out of Stock",
+    "Return Deadline": "Return Deadline",
+    "No borrowing history found.": "No borrowing history found."
 }

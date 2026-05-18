@@ -27,8 +27,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:peminjam')->prefix('peminjam')->name('peminjam.')->group(function () {
-        // Peminjam specific routes (Catalog, History)
-        Route::get('/catalog', function () { return 'Peminjam Catalog Placeholder'; })->name('catalog');
+        Route::get('/catalog', [\App\Http\Controllers\BorrowerCatalogController::class, 'catalog'])->name('catalog');
+        Route::get('/history', [\App\Http\Controllers\BorrowerCatalogController::class, 'history'])->name('history');
     });
 
     // Core Operations for Admin and Petugas

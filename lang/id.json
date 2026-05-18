@@ -87,5 +87,15 @@
     "Book returned successfully!": "Buku berhasil dikembalikan!",
     "This book has already been returned.": "Buku ini sudah dikembalikan sebelumnya.",
     "An error occurred while processing the borrowing transaction.": "Terjadi kesalahan saat memproses transaksi peminjaman.",
-    "An error occurred while processing the return transaction.": "Terjadi kesalahan saat memproses transaksi pengembalian."
+    "An error occurred while processing the return transaction.": "Terjadi kesalahan saat memproses transaksi pengembalian.",
+    "My Borrowing History": "Riwayat Peminjaman Saya",
+    "Search book title or writer...": "Cari judul buku atau penulis...",
+    "All Categories": "Semua Kategori",
+    "Filter": "Filter",
+    "Search": "Cari",
+    "No books found matching your criteria.": "Tidak ada buku yang cocok dengan kriteria pencarian Anda.",
+    "Available": "Tersedia",
+    "Out of Stock": "Habis",
+    "Return Deadline": "Batas Pengembalian",
+    "No borrowing history found.": "Tidak ada riwayat peminjaman ditemukan."
 }
