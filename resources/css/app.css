@@ -22,6 +22,39 @@
         @apply bg-white rounded-3xl shadow-sm border border-secondary-blush overflow-hidden;
     }
     .input-field {
-        @apply border-secondary-blush rounded-2xl shadow-sm block w-full text-text-charcoal bg-white transition-all duration-200 focus:ring-2 focus:ring-primary-rose focus:border-transparent outline-none;
+        @apply border-secondary-blush rounded-2xl shadow-sm block w-full text-text-charcoal bg-white transition-all duration-300 focus:ring-4 focus:ring-primary-rose/10 focus:border-primary-rose/50 outline-none;
     }
 }
+
+@layer utilities {
+    .transition-premium {
+        transition: all 450ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .animate-fade-in-up {
+        animation: fadeInUp 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0; /* Start hidden until animation plays */
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .delay-100 {
+        animation-delay: 100ms;
+    }
+    .delay-200 {
+        animation-delay: 200ms;
+    }
+    .delay-300 {
+        animation-delay: 300ms;
+    }
+}
+

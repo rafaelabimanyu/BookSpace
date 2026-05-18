@@ -45,7 +45,7 @@
     <!-- Book Grid Catalog -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @forelse($books as $book)
-            <div class="card p-4 flex flex-col bg-white border border-secondary-blush/40 hover:shadow-md transition duration-300 transform hover:-translate-y-1 relative overflow-hidden" x-data="{ showReviews: false }">
+            <div class="card p-4 flex flex-col bg-white border border-secondary-blush/40 hover:shadow-lg transition-premium hover:scale-[1.03] relative overflow-hidden" x-data="{ showReviews: false }">
                 <!-- Cover Image Frame -->
                 <div class="relative w-full aspect-[3/4] mb-4 bg-secondary-blush/20 rounded-2xl overflow-hidden border border-secondary-blush/20">
                     <!-- Wishlist Toggle overlay -->
@@ -64,7 +64,7 @@
                     </div>
 
                     @if($book->cover_image)
-                        <img src="{{ Str::startsWith($book->cover_image, 'http') ? $book->cover_image : (Str::startsWith($book->cover_image, 'uploads') ? asset($book->cover_image) : asset('storage/' . $book->cover_image)) }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-2xl transition duration-300 hover:scale-105">
+                        <img src="{{ Str::startsWith($book->cover_image, 'http') ? $book->cover_image : (Str::startsWith($book->cover_image, 'uploads') ? asset($book->cover_image) : asset('storage/' . $book->cover_image)) }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-2xl transition-premium hover:scale-110">
                     @else
                         <div class="w-full h-full flex flex-col items-center justify-center text-primary-rose">
                             <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -162,10 +162,10 @@
                 @if($reviewsCount > 0)
                     <div 
                         x-show="showReviews"
-                        x-transition:enter="transition ease-out duration-300 transform"
+                        x-transition:enter="transition-premium transform"
                         x-transition:enter-start="translate-y-full opacity-0"
                         x-transition:enter-end="translate-y-0 opacity-100"
-                        x-transition:leave="transition ease-in duration-200 transform"
+                        x-transition:leave="transition-premium transform"
                         x-transition:leave-start="translate-y-0 opacity-100"
                         x-transition:leave-end="translate-y-full opacity-0"
                         class="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 p-4 border border-secondary-blush/60 rounded-2xl flex flex-col justify-between"
