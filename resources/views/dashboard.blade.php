@@ -179,92 +179,410 @@
 
     @else
         <!-- ================= STAFF / ADMIN VIEW ================= -->
-        <div class="mb-8">
-            <h2 class="text-3xl font-display font-bold text-text-charcoal mb-2">{{ __('Welcome back to BookSpace') }}!</h2>
-            <p class="text-gray-500 font-medium">{{ __('Here is an overview of your library activity today.') }}</p>
-        </div>
-
-        <!-- Stat Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="card p-6 bg-gradient-to-br from-white to-secondary-blush border-none shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-text-charcoal">{{ __('Total Books') }}</h3>
-                    <div class="p-3 bg-white rounded-2xl shadow-sm text-primary-rose">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    </div>
-                </div>
-                <p class="text-4xl font-display font-bold text-primary-rose">{{ $staffTotalBooks }}</p>
-            </div>
-
-            <div class="card p-6 bg-gradient-to-br from-white to-pink-50 border-none shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-text-charcoal">{{ __('Active Borrowings') }}</h3>
-                    <div class="p-3 bg-white rounded-2xl shadow-sm text-primary-rose">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                </div>
-                <p class="text-4xl font-display font-bold text-primary-rose">{{ $staffActiveBorrowings }}</p>
-            </div>
-
-            <div class="card p-6 bg-gradient-to-br from-white to-rose-50 border-none shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-text-charcoal">{{ __('Overdue Books') }}</h3>
-                    <div class="p-3 bg-white rounded-2xl shadow-sm text-red-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    </div>
-                </div>
-                <p class="text-4xl font-display font-bold text-red-500">{{ $staffOverdueBorrowings }}</p>
-            </div>
-        </div>
-
-        <!-- Recent Activity Ledger (Placeholder) -->
-        <div class="card p-6 bg-white border border-secondary-blush/60 shadow-xs">
-            <h3 class="text-xl font-display font-bold text-text-charcoal mb-4">{{ __('Recent Activity') }}</h3>
+        <div x-data="{ openBorrowingModal: false, openBookModal: false }" class="animate-fadeIn space-y-8">
             
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-secondary-blush text-gray-400 font-semibold text-xs uppercase">
-                            <th class="py-3 px-4 font-display">#</th>
-                            <th class="py-3 px-4 font-display">{{ __('Borrower') }}</th>
-                            <th class="py-3 px-4 font-display">{{ __('Book Title') }}</th>
-                            <th class="py-3 px-4 font-display">{{ __('Borrow Date') }}</th>
-                            <th class="py-3 px-4 font-display">{{ __('Status') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-secondary-blush/30 font-medium text-sm">
-                        @php
-                            $recentList = \App\Models\Borrowing::with(['user', 'book'])->latest()->take(5)->get();
-                        @endphp
-                        @forelse($recentList as $index => $item)
-                            <tr class="hover:bg-secondary-blush/10 transition">
-                                <td class="py-3 px-4 text-gray-500">{{ $index + 1 }}</td>
-                                <td class="py-3 px-4 text-text-charcoal font-bold">{{ $item->user->name }}</td>
-                                <td class="py-3 px-4 text-gray-700 font-semibold">{{ $item->book->title }}</td>
-                                <td class="py-3 px-4 text-gray-500">{{ date('d M Y', strtotime($item->borrow_date)) }}</td>
-                                <td class="py-3 px-4">
-                                    @if($item->status === 'borrowed')
-                                        <span class="px-2 py-0.5 bg-amber-50 text-amber-600 border border-amber-100 rounded text-xs font-bold uppercase tracking-wider">{{ __('Borrowed') }}</span>
-                                    @else
-                                        <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded text-xs font-bold uppercase tracking-wider">{{ __('Returned') }}</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="py-12 text-center text-gray-400 font-medium">
-                                    <div class="flex flex-col items-center justify-center space-y-3">
-                                        <div class="p-4 bg-secondary-blush/60 rounded-full text-primary-rose animate-pulse">
-                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                                        </div>
-                                        <p class="text-sm font-semibold text-text-charcoal/70">{{ __('No recent activity to display.') }}</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <!-- Welcoming Animated Hero Section with Fade-In-Up motion -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-rose to-secondary-blush p-8 md:p-12 shadow-md text-text-charcoal border border-white/20 animate-slideUp">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/20 rounded-full blur-3xl filter opacity-80 animate-pulse"></div>
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-display font-bold mb-4 tracking-wide text-text-charcoal">
+                        {{ __('Welcome back to the Command Center, :name!', ['name' => auth()->user()->name]) }}
+                    </h2>
+                    <p class="text-sm md:text-base font-semibold text-text-charcoal/80 mb-6 leading-relaxed max-w-2xl">
+                        {{ __('Hello, :name! Today we have :overdue books overdue or due for return, and :outOfStock titles currently out of stock. Let\'s ensure smooth circulation today!', ['name' => auth()->user()->name, 'overdue' => $pendingOverdueCount, 'outOfStock' => $outOfStockBooksCount]) }}
+                    </p>
+                    <div class="inline-flex items-center gap-3 px-4 py-2 bg-white/40 backdrop-blur-md border border-white/30 rounded-2xl text-xs font-bold text-text-charcoal shadow-sm">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                        </span>
+                        <span>{{ __(':count Operations Pending Attention Today', ['count' => $pendingTasksCount]) }}</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- Asymmetrical Grid with stats and quick action widget -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left/Center Column (Col-Span 2): Stats & Visual Meters -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- Stats Cards Subgrid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Total Books Card -->
+                        <div class="card p-6 bg-gradient-to-br from-white to-secondary-blush/40 border border-secondary-blush/50 shadow-sm hover:scale-105 hover:shadow-[0_8px_30px_rgba(243,197,197,0.25)] transition duration-300 group">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('Total Books') }}</h3>
+                                <div class="p-3 bg-white rounded-2xl shadow-sm text-primary-rose group-hover:scale-110 transition duration-300">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                </div>
+                            </div>
+                            <p class="text-4xl font-display font-bold text-primary-rose">{{ $staffTotalBooks }}</p>
+                        </div>
+
+                        <!-- Active Borrowings Card -->
+                        <div class="card p-6 bg-gradient-to-br from-white to-pink-50/50 border border-secondary-blush/50 shadow-sm hover:scale-105 hover:shadow-[0_8px_30px_rgba(243,197,197,0.25)] transition duration-300 group">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('Active Borrowings') }}</h3>
+                                <div class="p-3 bg-white rounded-2xl shadow-sm text-primary-rose group-hover:scale-110 transition duration-300">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                            <p class="text-4xl font-display font-bold text-primary-rose">{{ $staffActiveBorrowings }}</p>
+                        </div>
+
+                        <!-- Overdue Books Card -->
+                        <div class="card p-6 bg-gradient-to-br from-white to-rose-50/50 border border-secondary-blush/50 shadow-sm hover:scale-105 hover:shadow-[0_8px_30px_rgba(239,68,68,0.15)] transition duration-300 group">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('Overdue Books') }}</h3>
+                                <div class="p-3 bg-white rounded-2xl shadow-sm text-red-400 group-hover:scale-110 transition duration-300">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </div>
+                            </div>
+                            <p class="text-4xl font-display font-bold text-red-500">{{ $staffOverdueBorrowings }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Analytics Panel (Circular Gauge and Popular Category Grid) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Fulfillment Rate Circular Meter -->
+                        <div class="card p-6 bg-white border border-secondary-blush flex flex-col justify-between items-center text-center">
+                            <h4 class="text-sm font-display font-bold text-text-charcoal mb-4 uppercase tracking-wider">{{ __('Circulation Fulfillment Rate') }}</h4>
+                            <div class="relative w-36 h-36 flex items-center justify-center">
+                                <!-- Outer Background Circle -->
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="72" cy="72" r="60" stroke="#FCEAEA" stroke-width="12" fill="transparent" />
+                                    <circle cx="72" cy="72" r="60" stroke="#F3C5C5" stroke-width="12" fill="transparent"
+                                            stroke-dasharray="377"
+                                            stroke-dashoffset="{{ 377 - (377 * $fulfillmentRate) / 100 }}"
+                                            stroke-linecap="round"
+                                            class="transition-all duration-1000 ease-out" />
+                                </svg>
+                                <div class="absolute flex flex-col items-center">
+                                    <span class="text-3xl font-display font-bold text-primary-rose">{{ $fulfillmentRate }}%</span>
+                                    <span class="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">{{ __('Return Ratio') }}</span>
+                                </div>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-500 mt-4 leading-relaxed max-w-[200px]">
+                                {{ __('Successful Returns vs Total Borrowings') }}
+                            </p>
+                        </div>
+
+                        <!-- Category Popularity Progress Bars -->
+                        <div class="card p-6 bg-white border border-secondary-blush flex flex-col justify-between">
+                            <h4 class="text-sm font-display font-bold text-text-charcoal mb-4 uppercase tracking-wider">{{ __('Popular Categories') }}</h4>
+                            <div class="space-y-4">
+                                @forelse($categoryPopularity as $cat)
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between items-center text-xs font-bold">
+                                            <span class="px-2.5 py-0.5 bg-secondary-blush text-primary-rose rounded-lg border border-primary-rose/30 shadow-xs text-[10px]">{{ $cat->name }}</span>
+                                            <span class="text-text-charcoal/70 text-[10px]">{{ $cat->borrow_count }} {{ __('Logs') }}</span>
+                                        </div>
+                                        <div class="w-full bg-secondary-blush/40 h-2 rounded-full overflow-hidden border border-secondary-blush/20">
+                                            <div class="bg-primary-rose h-full rounded-full transition-all duration-1000" style="width: {{ $cat->percentage }}%"></div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-8 text-gray-400 text-xs font-bold">
+                                        {{ __('No category data to display.') }}
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (Col-Span 1): Administrative "Quick Action Center" -->
+                <div class="lg:col-span-1">
+                    <div class="card p-6 bg-white border border-secondary-blush/60 flex flex-col h-full self-start">
+                        <h3 class="text-lg font-display font-bold text-text-charcoal mb-5 uppercase tracking-wider border-b border-secondary-blush/30 pb-3">{{ __('Quick Actions') }}</h3>
+                        <div class="space-y-4">
+                            <!-- Record New Borrowing -->
+                            <button @click="openBorrowingModal = true" class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-white to-secondary-blush/20 hover:to-secondary-blush/50 border border-secondary-blush/40 hover:border-primary-rose/40 rounded-2xl text-left transition duration-200 transform hover:-translate-y-1 group shadow-xs">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-3 bg-white rounded-xl text-primary-rose shadow-xs group-hover:scale-110 transition duration-200 border border-secondary-blush">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-display font-bold text-text-charcoal">{{ __('Record Borrowing') }}</h4>
+                                        <p class="text-[10px] text-gray-400 font-semibold mt-0.5">{{ __('Record new book checkout') }}</p>
+                                    </div>
+                                </div>
+                                <svg class="w-4 h-4 text-gray-300 group-hover:text-primary-rose transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+
+                            <!-- Add New Book -->
+                            <button @click="openBookModal = true" class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-white to-secondary-blush/20 hover:to-secondary-blush/50 border border-secondary-blush/40 hover:border-primary-rose/40 rounded-2xl text-left transition duration-200 transform hover:-translate-y-1 group shadow-xs">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-3 bg-white rounded-xl text-primary-rose shadow-xs group-hover:scale-110 transition duration-200 border border-secondary-blush">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-display font-bold text-text-charcoal">{{ __('Add Book') }}</h4>
+                                        <p class="text-[10px] text-gray-400 font-semibold mt-0.5">{{ __('Add new title to catalog') }}</p>
+                                    </div>
+                                </div>
+                                <svg class="w-4 h-4 text-gray-300 group-hover:text-primary-rose transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+
+                            <!-- View Circulation Reports -->
+                            @if(auth()->user()->role === 'admin')
+                                <a href="{{ route('admin.reports') }}" class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-white to-secondary-blush/20 hover:to-secondary-blush/50 border border-secondary-blush/40 hover:border-primary-rose/40 rounded-2xl text-left transition duration-200 transform hover:-translate-y-1 group shadow-xs">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-3 bg-white rounded-xl text-primary-rose shadow-xs group-hover:scale-110 transition duration-200 border border-secondary-blush">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m32-12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-display font-bold text-text-charcoal">{{ __('View Circulation Reports') }}</h4>
+                                            <p class="text-[10px] text-gray-400 font-semibold mt-0.5">{{ __('View analytics & reports') }}</p>
+                                        </div>
+                                    </div>
+                                    <svg class="w-4 h-4 text-gray-300 group-hover:text-primary-rose transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </a>
+                            @else
+                                <div class="relative cursor-not-allowed group">
+                                    <div class="w-full flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl text-left opacity-60">
+                                        <div class="flex items-center gap-3">
+                                            <div class="p-3 bg-white rounded-xl text-gray-400 border border-gray-100 shadow-xs">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m32-12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-display font-bold text-gray-400">{{ __('View Circulation Reports') }}</h4>
+                                                <p class="text-[10px] text-gray-400 font-semibold mt-0.5">{{ __('Restricted to Administrators') }}</p>
+                                            </div>
+                                        </div>
+                                        <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0-8V7m0 0v2m0-2h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z"></path></svg>
+                                    </div>
+                                    <!-- Hover Tooltip explaining restriction -->
+                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-56 p-2 bg-text-charcoal text-white text-[10px] rounded-xl opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none text-center shadow-md leading-relaxed z-20">
+                                        {{ __('This feature is restricted to Admin role.') }}
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Dynamic Activity Timeline for Recent Activity -->
+            <div class="card p-6 bg-white border border-secondary-blush/60 shadow-xs">
+                <h3 class="text-xl font-display font-bold text-text-charcoal mb-6">{{ __('Recent Activity') }}</h3>
+                
+                <div class="relative pl-6 border-l-2 border-secondary-blush/60 space-y-6">
+                    @forelse($recentActivity as $index => $item)
+                        <div class="relative flex items-start gap-4 animate-fadeIn" style="animation-delay: {{ $index * 100 }}ms">
+                            <!-- Timeline point marker -->
+                            <div class="absolute -left-[31px] mt-1.5 w-4 h-4 rounded-full bg-white border-4 border-primary-rose shadow-xs"></div>
+                            
+                            <!-- Avatar Placeholder -->
+                            <div class="flex-shrink-0 w-10 h-10 bg-secondary-blush text-primary-rose font-display font-bold text-sm rounded-full flex items-center justify-center border border-primary-rose/20 shadow-xs">
+                                {{ strtoupper(substr($item->user->name, 0, 2)) }}
+                            </div>
+                            
+                            <!-- Content Body -->
+                            <div class="flex-1 min-w-0 bg-bg-cream/40 p-4 rounded-2xl border border-secondary-blush/30 hover:bg-secondary-blush/10 transition">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                    <p class="text-sm font-bold text-text-charcoal">
+                                        {{ $item->user->name }}
+                                    </p>
+                                    <div class="flex items-center gap-2">
+                                        @if($item->status === 'borrowed')
+                                            <span class="relative flex h-2 w-2">
+                                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                                <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                                            </span>
+                                            <span class="px-2 py-0.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                                                {{ __('Borrowed') }}
+                                            </span>
+                                        @else
+                                            <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                {{ __('Returned') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 font-semibold leading-relaxed">
+                                    {{ __('Borrowed book') }} <span class="text-primary-rose font-bold">"{{ $item->book->title }}"</span> {{ __('by') }} {{ $item->book->writer }}.
+                                </p>
+                                <div class="flex items-center justify-between mt-3 pt-2 border-t border-secondary-blush/20 text-[10px] text-gray-400 font-bold">
+                                    <span>{{ __('Pinjam') }}: {{ date('d M Y', strtotime($item->borrow_date)) }}</span>
+                                    <span class="text-rose-500 font-extrabold uppercase">{{ __('Tenggat') }}: {{ date('d M Y', strtotime($item->return_date)) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <!-- Empty state fallback with premium custom SVG book placeholder -->
+                        <div class="py-12 flex flex-col items-center justify-center text-center space-y-4">
+                            <svg class="w-20 h-20 text-primary-rose/40 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                            </svg>
+                            <div class="space-y-1">
+                                <p class="text-sm font-bold text-text-charcoal">{{ __('No library transactions today.') }}</p>
+                                <p class="text-xs text-gray-400 font-semibold">{{ __('All circulation systems are empty and waiting for records.') }}</p>
+                            </div>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- ================= ACTION MODALS ================= -->
+            <!-- Borrowing Record Modal -->
+            <div x-show="openBorrowingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-text-charcoal/40 backdrop-blur-xs animate-fadeIn" x-cloak>
+                <div @click.away="openBorrowingModal = false" class="card w-full max-w-lg p-8 bg-white border border-primary-rose/40 shadow-2xl relative"
+                     x-show="openBorrowingModal"
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-200 transform"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95">
+                    
+                    <button @click="openBorrowingModal = false" class="absolute top-6 right-6 text-gray-400 hover:text-text-charcoal transition p-1 hover:bg-secondary-blush rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+
+                    <h3 class="text-2xl font-display font-bold text-text-charcoal mb-6 border-b border-secondary-blush/30 pb-3">{{ __('Record Borrowing') }}</h3>
+
+                    <form method="POST" action="{{ route('borrowings.store') }}" x-data="{ submitted: false }" @submit="submitted = true">
+                        @csrf
+                        <div class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Borrower') }}</label>
+                                <select name="user_id" class="input-field py-3 px-4" required>
+                                    <option value="">{{ __('Select Borrower') }}</option>
+                                    @foreach($borrowersList as $b)
+                                        <option value="{{ $b->id }}">{{ $b->name }} ({{ $b->email }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Select Book') }}</label>
+                                <select name="book_id" class="input-field py-3 px-4" required>
+                                    <option value="">{{ __('Select Book') }}</option>
+                                    @foreach($booksList as $bk)
+                                        <option value="{{ $bk->id }}">{{ $bk->title }} ({{ __('Stok') }}: {{ $bk->stock }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Borrow Date') }}</label>
+                                    <input type="date" name="borrow_date" value="{{ date('Y-m-d') }}" class="input-field py-3 px-4 text-sm" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Return Date') }}</label>
+                                    <input type="date" name="return_date" class="input-field py-3 px-4 text-sm" placeholder="{{ __('Defaults to 7 days') }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 border-t border-secondary-blush/30 pt-4">
+                            <button type="button" @click="openBorrowingModal = false" class="px-6 py-3 bg-secondary-blush border border-primary-rose rounded-2xl font-display font-semibold text-primary-rose uppercase tracking-widest hover:bg-rose-50 text-[10px] transition duration-150">
+                                {{ __('Cancel') }}
+                            </button>
+                            <button type="submit" :disabled="submitted" class="btn-primary py-3 px-6 text-[10px] inline-flex items-center gap-2">
+                                <template x-if="submitted">
+                                    <svg class="animate-spin h-3.5 w-3.5 text-text-charcoal" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </template>
+                                <span x-text="submitted ? '{{ __('Processing...') }}' : '{{ __('Save') }}'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Book Registration Modal -->
+            <div x-show="openBookModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-text-charcoal/40 backdrop-blur-xs animate-fadeIn" x-cloak>
+                <div @click.away="openBookModal = false" class="card w-full max-w-lg p-8 bg-white border border-primary-rose/40 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+                     x-show="openBookModal"
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-200 transform"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95">
+                    
+                    <button @click="openBookModal = false" class="absolute top-6 right-6 text-gray-400 hover:text-text-charcoal transition p-1 hover:bg-secondary-blush rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+
+                    <h3 class="text-2xl font-display font-bold text-text-charcoal mb-6 border-b border-secondary-blush/30 pb-3">{{ __('Add Book') }}</h3>
+
+                    <form method="POST" action="{{ route('books.store') }}" enctype="multipart/form-data" x-data="{ submitted: false }" @submit="submitted = true">
+                        @csrf
+                        <div class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Book Title') }}</label>
+                                <input type="text" name="title" class="input-field py-2.5 px-4 text-sm" placeholder="{{ __('e.g. Harry Potter') }}" required>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Writer') }}</label>
+                                    <input type="text" name="writer" class="input-field py-2.5 px-4 text-sm" placeholder="{{ __('e.g. J.K. Rowling') }}" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Publisher') }}</label>
+                                    <input type="text" name="publisher" class="input-field py-2.5 px-4 text-sm" placeholder="{{ __('e.g. Gramedia') }}" required>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Year') }}</label>
+                                    <input type="number" name="year" value="{{ date('Y') }}" class="input-field py-2.5 px-4 text-sm" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('ISBN') }}</label>
+                                    <input type="text" name="ISBN" class="input-field py-2.5 px-4 text-sm" placeholder="13-digit" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Stock') }}</label>
+                                    <input type="number" name="stock" min="0" class="input-field py-2.5 px-4 text-sm" placeholder="e.g. 5" required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Category') }}</label>
+                                <select name="category_id" class="input-field py-3 px-4 text-sm" required>
+                                    <option value="">{{ __('Select Category') }}</option>
+                                    @foreach($allCategoriesList as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ __('Cover Image') }}</label>
+                                <input type="file" name="cover_image" class="input-field py-2 px-3 text-xs" accept="image/*">
+                                <p class="text-[9px] text-gray-400 mt-1 font-semibold">{{ __('Maximum image upload size: 2MB') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 border-t border-secondary-blush/30 pt-4">
+                            <button type="button" @click="openBookModal = false" class="px-6 py-3 bg-secondary-blush border border-primary-rose rounded-2xl font-display font-semibold text-primary-rose uppercase tracking-widest hover:bg-rose-50 text-[10px] transition duration-150">
+                                {{ __('Cancel') }}
+                            </button>
+                            <button type="submit" :disabled="submitted" class="btn-primary py-3 px-6 text-[10px] inline-flex items-center gap-2">
+                                <template x-if="submitted">
+                                    <svg class="animate-spin h-3.5 w-3.5 text-text-charcoal" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </template>
+                                <span x-text="submitted ? '{{ __('Processing...') }}' : '{{ __('Save') }}'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     @endif
 
