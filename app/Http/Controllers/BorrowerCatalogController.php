@@ -103,4 +103,132 @@ class BorrowerCatalogController extends Controller
 
         return back()->with('success', __('Thank you for your review!'));
     }
+
+    public function showBook(Book $book)
+    {
+        $book->load(['category', 'reviews.user']);
+        return view('peminjam.show', compact('book'));
+    }
+
+    public function wishlist()
+    {
+        $books = auth()->user()->wishlistedBooks()->with('category')->latest()->get();
+        return view('peminjam.wishlist', compact('books'));
+    }
+
+    public function toggleWishlist(Request $request)
+    {
+        $bookId = $request->input('book_id');
+        $user = auth()->user();
+        
+        $res = $user->wishlistedBooks()->toggle($bookId);
+        $message = !empty($res['attached']) ? __('Added to Wishlist!') : __('Removed from Wishlist!');
+
+        return back()->with('success', $message);
+    }
+
+    public function profile()
+    {
+        $user = auth()->user();
+        return view('peminjam.profile', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . $user->id . '.' . $file->getClientOriginalExtension();
+            
+            // Ensure the directory exists
+            $dir = public_path('uploads/profiles');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            
+            $file->move($dir, $filename);
+            $validated['profile_picture'] = 'uploads/profiles/' . $filename;
+        }
+
+        $user->update($validated);
+
+        return redirect()->back()->with('success', __('Profile updated successfully!'));
+    }
+
+    public function fines()
+    {
+        $borrowings = auth()->user()->borrowings()->with('book')->latest()->get();
+        
+        $borrowings->transform(function ($borrowing) {
+            if ($borrowing->status === 'borrowed') {
+                $today = now()->startOfDay();
+                $deadline = \Illuminate\Support\Carbon::parse($borrowing->return_date)->startOfDay();
+                
+                if ($today->gt($deadline)) {
+                    $daysLate = abs($today->diffInDays($deadline));
+                    $borrowing->calculated_fine = $daysLate * 1000; // Rp 1,000 per day
+                    $borrowing->days_late = $daysLate;
+                } else {
+                    $borrowing->calculated_fine = 0;
+                    $borrowing->days_late = 0;
+                }
+            } else {
+                $borrowing->calculated_fine = $borrowing->fine_amount;
+                
+                // Calculate actual returned late days
+                $deadline = \Illuminate\Support\Carbon::parse($borrowing->created_at)->addDays(7)->startOfDay();
+                $actualReturn = \Illuminate\Support\Carbon::parse($borrowing->return_date)->startOfDay();
+                
+                if ($actualReturn->gt($deadline)) {
+                    $borrowing->days_late = abs($actualReturn->diffInDays($deadline));
+                } else {
+                    $borrowing->days_late = 0;
+                }
+            }
+            return $borrowing;
+        });
+
+        return view('peminjam.fines', compact('borrowings'));
+    }
+
+    public function payFine(Borrowing $borrowing)
+    {
+        // Calculate the fine if active, otherwise use persisted denda
+        $fineAmount = $borrowing->fine_amount;
+        
+        if ($borrowing->status === 'borrowed') {
+            $today = now()->startOfDay();
+            $deadline = \Illuminate\Support\Carbon::parse($borrowing->return_date)->startOfDay();
+            
+            if ($today->gt($deadline)) {
+                $daysLate = abs($today->diffInDays($deadline));
+                $fineAmount = $daysLate * 1000;
+            }
+        } else {
+            // Persisted
+            if ($fineAmount <= 0) {
+                // Check if they returned late and have unpaid fine
+                $deadline = \Illuminate\Support\Carbon::parse($borrowing->created_at)->addDays(7)->startOfDay();
+                $actualReturn = \Illuminate\Support\Carbon::parse($borrowing->return_date)->startOfDay();
+                
+                if ($actualReturn->gt($deadline)) {
+                    $daysLate = abs($actualReturn->diffInDays($deadline));
+                    $fineAmount = $daysLate * 1000;
+                }
+            }
+        }
+
+        $borrowing->update([
+            'fine_amount' => $fineAmount,
+            'fine_status' => 'paid',
+        ]);
+
+        return redirect()->back()->with('success', __('Fine paid successfully!'));
+    }
 }

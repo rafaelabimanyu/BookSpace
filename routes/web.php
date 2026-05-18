@@ -27,6 +27,13 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:peminjam')->prefix('peminjam')->name('peminjam.')->group(function () {
         Route::get('/catalog', [\App\Http\Controllers\BorrowerCatalogController::class, 'catalog'])->name('catalog');
+        Route::get('/books/{book}', [\App\Http\Controllers\BorrowerCatalogController::class, 'showBook'])->name('books.show');
+        Route::get('/wishlist', [\App\Http\Controllers\BorrowerCatalogController::class, 'wishlist'])->name('wishlist');
+        Route::post('/wishlist/toggle', [\App\Http\Controllers\BorrowerCatalogController::class, 'toggleWishlist'])->name('wishlist.toggle');
+        Route::get('/profile', [\App\Http\Controllers\BorrowerCatalogController::class, 'profile'])->name('profile');
+        Route::post('/profile/update', [\App\Http\Controllers\BorrowerCatalogController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/fines', [\App\Http\Controllers\BorrowerCatalogController::class, 'fines'])->name('fines');
+        Route::post('/fines/{borrowing}/pay', [\App\Http\Controllers\BorrowerCatalogController::class, 'payFine'])->name('fines.pay');
         Route::get('/history', [\App\Http\Controllers\BorrowerCatalogController::class, 'history'])->name('history');
         Route::post('/borrow', [\App\Http\Controllers\BorrowerCatalogController::class, 'reserveBook'])->name('borrow');
         Route::post('/review', [\App\Http\Controllers\BorrowerCatalogController::class, 'storeReview'])->name('review.store');
