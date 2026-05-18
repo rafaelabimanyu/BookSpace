@@ -18,8 +18,7 @@ Route::middleware('auth')->group(function () {
 
     // Role-based Route Groups
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        // Admin specific routes (User management, reports)
-        Route::get('/reports', function () { return 'Admin Reports Placeholder'; })->name('reports');
+        Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports');
     });
 
     Route::middleware('role:petugas')->prefix('petugas')->name('petugas.')->group(function () {
