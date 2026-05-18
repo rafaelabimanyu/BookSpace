@@ -1,58 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BookSpace 🌸
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Welcome to **BookSpace**, an elegant, modern, and highly professional library management system designed to make library operations delightful. BookSpace features a charming soft-pink aesthetic combined with charming, cute, yet highly readable typography, structured around role-based access controls and dynamic English/Indonesian localization.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📖 Table of Contents
+1. [Project Overview](#-project-overview)
+2. [Role-Based Feature Matrix](#-role-based-feature-matrix)
+3. [Local Installation Guide](#-local-installation-guide)
+4. [Testing Demo Accounts](#-testing-demo-accounts)
+5. [Developer Documentation Suite](#-developer-documentation-suite)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🌸 Project Overview
 
-## Learning Laravel
+BookSpace replaces traditional, dry administrative spreadsheets with a modern visual reader portal and a transaction-safe stock control center. Built using **Laravel 11**, **Tailwind CSS**, and **Blade**, BookSpace is organized around custom styled tokens, dynamic multi-language sets, and robust database concurrency locks to protect inventory quantities during concurrent borrowings.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 👑 Role-Based Feature Matrix
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+BookSpace serves three primary user cohorts, each accessing dedicated, scoped workspaces:
 
-## Agentic Development
+| Role | Target Workspace | Core Operations & Features |
+| :--- | :--- | :--- |
+| **Peminjam (Borrower)** | [dashboard](file:///c:/laragon/www/BookSpace/resources/views/dashboard.blade.php) | • Custom asymmetrical reader dashboard greeting.<br>• Visual card catalog with instant search & category dropdown filters.<br>• Micro-animated recommendations carousel.<br>• Real-time deadline indicators with pulsing warnings.<br>• Scoped personal transaction history table. |
+| **Petugas (Staff)** | [dashboard](file:///c:/laragon/www/BookSpace/resources/views/dashboard.blade.php) | • General library stock counter stats card.<br>• Complete Books CRUD with 2MB validation and dynamic cover uploading.<br>• Complete Categories CRUD with double-entry validation.<br>• Library Circulation recorder (User selector + Book selector + Auto-calculated dates).<br>• Return transaction triggers with active inventory stock incrementing. |
+| **Admin** | [reports](file:///c:/laragon/www/BookSpace/resources/views/admin/reports.blade.php) | • All **Petugas** features.<br>• Advanced **Library Reporting Dashboard** featuring monthly, yearly, and category filters.<br>• Print-optimized layout rendering clean physical papers via `@media print`. |
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+## 🚀 Local Installation Guide
 
-php artisan boost:install
-```
+BookSpace is optimized to run locally on development platforms like **Laragon** or **XAMPP**.
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Prerequisites
+- **PHP 8.2** or higher
+- **Composer**
+- **Node.js & NPM**
+- **MySQL / MariaDB**
 
-## Contributing
+### Installation Steps
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Clone the Repository** and enter the folder:
+   ```bash
+   cd c:\laragon\www\BookSpace
+   ```
 
-## Code of Conduct
+2. **Install Dependencies**:
+   ```bash
+   composer install
+   npm install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Configure Environment File**:
+   Copy `.env.example` to `.env` and set up your local database credentials:
+   ```bash
+   copy .env.example .env
+   ```
+   Modify database configuration details in `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=bookspace
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-## Security Vulnerabilities
+4. **Generate Application Key**:
+   ```bash
+   php artisan key:generate
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Link Public Storage**:
+   BookSpace stores cover image uploads securely inside `storage/app/public/covers`. Connect it to the public directory using:
+   ```bash
+   php artisan storage:link
+   ```
 
-## License
+6. **Reset Database & Seed Thematic Dummy Data**:
+   Prepopulate BookSpace with realistic books, categories, staff accounts, and borrowing history:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+7. **Compile CSS and Bundled Assets**:
+   Compile the theme stylesheets and AlpineJS bundles:
+   ```bash
+   npm run build
+   ```
+
+8. **Start Local Development Server**:
+   ```bash
+   php artisan serve
+   ```
+   Open `http://127.0.0.1:8000` in your web browser.
+
+---
+
+## 🔑 Testing Demo Accounts
+
+The database seeders configure three default accounts representing distinct roles with password `'password'`:
+
+| Email Username | Role Profile | Key Access Areas |
+| :--- | :--- | :--- |
+| `admin@bookspace.test` | **Admin** | Catalog, Categories, Books, Borrowings, Printable Reports |
+| `petugas@bookspace.test` | **Petugas (Staff)** | Catalog, Categories, Books, Borrowings |
+| `peminjam@bookspace.test` | **Peminjam (Borrower)** | Custom Animated Dashboard, Book Catalog, Personal History |
+
+---
+
+## 📚 Developer Documentation Suite
+
+For engineering teams looking to modify, extend, or maintain BookSpace, please refer to the following specialized guides inside the root [docs/](file:///c:/laragon/www/BookSpace/docs) directory:
+
+- 📊 **[docs/ARCHITECTURE.md](file:///c:/laragon/www/BookSpace/docs/ARCHITECTURE.md)**: Details the Enum RBAC model, the dynamic variadic `RoleMiddleware`, database Eloquent relationships, and transaction-safe stock inventory locking systems.
+- 🎨 **[docs/FRONTEND_STYLE_GUIDE.md](file:///c:/laragon/www/BookSpace/docs/FRONTEND_STYLE_GUIDE.md)**: Catalogues the theme CSS tokens, typography pairings, standard utility classes (cards, fields, custom buttons), and borrower-dashboard animations.
+- 🌐 **[docs/LOCALIZATION_GUIDE.md](file:///c:/laragon/www/BookSpace/docs/LOCALIZATION_GUIDE.md)**: Explains the SetLocale session architecture, JSON translation dictionaries, and blade syntax standard guidelines.
