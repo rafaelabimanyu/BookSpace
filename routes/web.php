@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:peminjam')->prefix('peminjam')->name('peminjam.')->group(function () {
         Route::get('/catalog', [\App\Http\Controllers\BorrowerCatalogController::class, 'catalog'])->name('catalog');
         Route::get('/history', [\App\Http\Controllers\BorrowerCatalogController::class, 'history'])->name('history');
+        Route::post('/borrow', [\App\Http\Controllers\BorrowerCatalogController::class, 'reserveBook'])->name('borrow');
+        Route::post('/review', [\App\Http\Controllers\BorrowerCatalogController::class, 'storeReview'])->name('review.store');
     });
 
     // Core Operations for Admin and Petugas

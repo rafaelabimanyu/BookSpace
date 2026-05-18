@@ -106,23 +106,70 @@
 
         <!-- Main Inner Content -->
         <div class="p-8 flex-1">
-            <!-- Toast Notifications -->
-            @if (session('success'))
-                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl flex items-center gap-2 shadow-sm font-medium">
-                    <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl flex items-center gap-2 shadow-sm font-medium">
-                    <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ session('error') }}
-                </div>
-            @endif
-
             @yield('content')
         </div>
+    </div>
+
+    <!-- Global Animated Soft-Pink Toasts -->
+    <div
+        x-data="{
+            toasts: [],
+            addToast(message, type = 'success') {
+                const id = Date.now();
+                this.toasts.push({ id, message, type });
+                setTimeout(() => this.removeToast(id), 5000);
+            },
+            removeToast(id) {
+                this.toasts = this.toasts.filter(t => t.id !== id);
+            }
+        }"
+        x-init="
+            @if(session('success')) addToast('{{ addslashes(session('success')) }}', 'success'); @endif
+            @if(session('error')) addToast('{{ addslashes(session('error')) }}', 'error'); @endif
+        "
+        @trigger-toast.window="addToast($event.detail.message, $event.detail.type)"
+        class="fixed top-6 right-6 z-50 flex flex-col gap-3 w-full max-w-sm"
+    >
+        <template x-for="toast in toasts" :key="toast.id">
+            <div
+                x-show="true"
+                x-transition:enter="transform ease-out duration-300 transition-all"
+                x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-4"
+                x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="w-full bg-secondary-blush border border-primary-rose text-text-charcoal p-4 rounded-2xl shadow-lg flex items-start gap-3 backdrop-blur-md bg-opacity-95"
+            >
+                <!-- Icon -->
+                <div class="flex-shrink-0 mt-0.5">
+                    <template x-if="toast.type === 'success'">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-primary-rose border border-primary-rose/30 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </span>
+                    </template>
+                    <template x-if="toast.type === 'error'">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-rose-500 border border-rose-200 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </span>
+                    </template>
+                </div>
+                <!-- Content -->
+                <div class="flex-1">
+                    <p class="text-sm font-bold text-text-charcoal" x-text="toast.message"></p>
+                </div>
+                <!-- Close -->
+                <button @click="removeToast(toast.id)" class="flex-shrink-0 text-text-charcoal/40 hover:text-text-charcoal transition p-0.5 rounded-lg hover:bg-white/40">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </template>
     </div>
 
 </body>

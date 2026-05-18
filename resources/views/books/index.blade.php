@@ -42,6 +42,49 @@
                             <td class="py-4 px-4">
                                 <div class="text-text-charcoal font-bold text-base">{{ $book->title }}</div>
                                 <div class="text-gray-400 text-xs mt-1 font-semibold">ISBN: {{ $book->ISBN }} | {{ $book->year }}</div>
+                                
+                                <!-- Rating and inline accordion comments -->
+                                @php
+                                    $reviewsCount = $book->reviews->count();
+                                    $averageRating = $reviewsCount > 0 ? round($book->reviews->avg('rating'), 1) : 0;
+                                @endphp
+                                <div class="flex flex-col mt-2" x-data="{ showReviews: false }">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-amber-400 text-sm">★</span>
+                                        <span class="text-xs text-text-charcoal font-bold">{{ $averageRating }}</span>
+                                        <span class="text-xs text-gray-400">({{ $reviewsCount }})</span>
+                                        @if($reviewsCount > 0)
+                                            <button @click="showReviews = !showReviews" class="text-primary-rose hover:underline font-bold text-[10px] ml-2 flex items-center gap-0.5 uppercase tracking-wide">
+                                                <span x-text="showReviews ? '{{ __('Hide Reviews') }}' : '{{ __('View Reviews') }}'"></span>
+                                                <svg class="w-3 h-3 transition-transform duration-200" :class="showReviews ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </button>
+                                        @endif
+                                    </div>
+                                    @if($reviewsCount > 0)
+                                        <div x-show="showReviews" x-collapse class="mt-2 space-y-2 max-w-md bg-secondary-blush/20 border border-secondary-blush/40 p-3 rounded-2xl" style="display: none;">
+                                            <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2 border-b border-secondary-blush/60 pb-1 flex justify-between items-center">
+                                                <span>{{ __('User Reviews') }}</span>
+                                                <span>{{ $reviewsCount }} {{ __('reviews') }}</span>
+                                            </div>
+                                            <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                                                @foreach($book->reviews as $review)
+                                                    <div class="bg-white/80 p-2 rounded-xl border border-secondary-blush/40 text-left">
+                                                        <div class="flex justify-between items-center mb-1">
+                                                            <span class="font-bold text-[10px] text-text-charcoal truncate max-w-[120px]">{{ $review->user->name }}</span>
+                                                            <div class="flex text-[9px] text-amber-400">
+                                                                @for($i = 1; $i <= 5; $i++)
+                                                                    <span>{{ $i <= $review->rating ? '★' : '☆' }}</span>
+                                                                @endfor
+                                                            </div>
+                                                        </div>
+                                                        <p class="text-gray-600 text-[10px] leading-snug">{{ $review->comment }}</p>
+                                                        <span class="text-[8px] text-gray-400 block text-right mt-1">{{ $review->created_at->format('d M Y') }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
                             </td>
                             <td class="py-4 px-4 text-gray-600">{{ $book->writer }}</td>
                             <td class="py-4 px-4 text-gray-600">{{ $book->publisher }}</td>

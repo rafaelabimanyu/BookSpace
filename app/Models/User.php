@@ -18,6 +18,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Borrowing::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
