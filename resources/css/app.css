@@ -22,6 +22,6 @@
         @apply bg-white rounded-3xl shadow-sm border border-secondary-blush overflow-hidden;
     }
     .input-field {
-        @apply border-secondary-blush focus:border-primary-rose focus:ring-primary-rose rounded-2xl shadow-sm block w-full text-text-charcoal bg-white;
+        @apply border-secondary-blush rounded-2xl shadow-sm block w-full text-text-charcoal bg-white transition-all duration-200 focus:ring-2 focus:ring-primary-rose focus:border-transparent outline-none;
     }
 }

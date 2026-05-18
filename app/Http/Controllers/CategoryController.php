@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -13,16 +15,9 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|unique:categories,name|max:255',
-        ], [
-            'name.required' => __('Category name is required.'),
-            'name.unique' => __('Category name has already been taken.'),
-        ]);
-
-        Category::create($request->only('name'));
+        Category::create($request->validated());
 
         return redirect()->route('categories.index')->with('success', __('Category created successfully!'));
     }
@@ -32,16 +27,9 @@ class CategoryController extends Controller
         return view('categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-        ], [
-            'name.required' => __('Category name is required.'),
-            'name.unique' => __('Category name has already been taken.'),
-        ]);
-
-        $category->update($request->only('name'));
+        $category->update($request->validated());
 
         return redirect()->route('categories.index')->with('success', __('Category updated successfully!'));
     }

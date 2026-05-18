@@ -94,10 +94,10 @@
             <div class="flex items-center gap-6">
                 <!-- Language Switcher -->
                 <div class="flex items-center bg-white rounded-2xl shadow-sm border border-secondary-blush p-1">
-                    <a href="{{ route('locale.switch', 'en') }}" class="px-3 py-1 rounded-xl text-sm font-semibold transition {{ app()->getLocale() === 'en' ? 'bg-primary-rose text-white' : 'text-text-charcoal hover:bg-secondary-blush' }}">
+                    <a href="{{ route('locale.switch', 'en') }}" class="px-3 py-1 rounded-xl text-sm font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 {{ app()->getLocale() === 'en' ? 'bg-primary-rose text-white shadow-sm font-bold' : 'text-text-charcoal hover:bg-secondary-blush/60 hover:text-primary-rose' }}">
                         EN
                     </a>
-                    <a href="{{ route('locale.switch', 'id') }}" class="px-3 py-1 rounded-xl text-sm font-semibold transition {{ app()->getLocale() === 'id' ? 'bg-primary-rose text-white' : 'text-text-charcoal hover:bg-secondary-blush' }}">
+                    <a href="{{ route('locale.switch', 'id') }}" class="px-3 py-1 rounded-xl text-sm font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 {{ app()->getLocale() === 'id' ? 'bg-primary-rose text-white shadow-sm font-bold' : 'text-text-charcoal hover:bg-secondary-blush/60 hover:text-primary-rose' }}">
                         ID
                     </a>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\User;
+use App\Http\Requests\StoreBorrowingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,22 +24,11 @@ class BorrowingController extends Controller
         return view('borrowings.create', compact('users', 'books'));
     }
 
-    public function store(Request $request)
+    public function store(StoreBorrowingRequest $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'book_id' => 'required|exists:books,id',
-            'borrow_date' => 'required|date',
-            'return_date' => 'nullable|date|after_or_equal:borrow_date',
-        ], [
-            'user_id.required' => __('Borrower is required.'),
-            'book_id.required' => __('Book is required.'),
-            'borrow_date.required' => __('Borrow date is required.'),
-            'return_date.after_or_equal' => __('Return date must be equal or after borrow date.'),
-        ]);
-
-        $borrowDate = $request->borrow_date;
-        $returnDate = $request->return_date ?: date('Y-m-d', strtotime($borrowDate . ' +7 days'));
+        $validated = $request->validated();
+        $borrowDate = $validated['borrow_date'];
+        $returnDate = !empty($validated['return_date']) ? $validated['return_date'] : date('Y-m-d', strtotime($borrowDate . ' +7 days'));
 
         // DB Transaction for stock checking and safety
         try {

@@ -6,6 +6,8 @@ use App\Models\Book;
 use App\Models\Category;
 use App\Models\Borrowing;
 use App\Models\Review;
+use App\Http\Requests\ReserveBookRequest;
+use App\Http\Requests\StoreReviewRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,13 +43,10 @@ class BorrowerCatalogController extends Controller
         return view('peminjam.history', compact('borrowings'));
     }
 
-    public function reserveBook(Request $request)
+    public function reserveBook(ReserveBookRequest $request)
     {
-        $request->validate([
-            'book_id' => 'required|exists:books,id',
-        ]);
-
-        $bookId = $request->input('book_id');
+        $validated = $request->validated();
+        $bookId = $validated['book_id'];
         $userId = auth()->user()->id;
 
         $book = Book::find($bookId);
@@ -87,33 +86,18 @@ class BorrowerCatalogController extends Controller
         }
     }
 
-    public function storeReview(Request $request)
+    public function storeReview(StoreReviewRequest $request)
     {
-        $request->validate([
-            'book_id' => 'required|exists:books,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:1000',
-        ]);
-
+        $validated = $request->validated();
         $userId = auth()->user()->id;
-        $bookId = $request->input('book_id');
-
-        // Security: ensure the user has actually borrowed and returned the book at least once.
-        $hasReturned = Borrowing::where('user_id', $userId)
-            ->where('book_id', $bookId)
-            ->where('status', 'returned')
-            ->exists();
-
-        if (!$hasReturned) {
-            return back()->with('error', __('You can only review books you have borrowed and returned.'));
-        }
+        $bookId = $validated['book_id'];
 
         // Save or update the review
         Review::updateOrCreate(
             ['user_id' => $userId, 'book_id' => $bookId],
             [
-                'rating' => $request->input('rating'),
-                'comment' => $request->input('comment'),
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'],
             ]
         );
 

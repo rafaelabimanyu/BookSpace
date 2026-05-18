@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Category;
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,30 +23,9 @@ class BookController extends Controller
         return view('books.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'writer' => 'required|string|max:255',
-            'publisher' => 'required|string|max:255',
-            'year' => 'required|integer|min:1000|max:' . date('Y'),
-            'ISBN' => 'required|string|max:50',
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'title.required' => __('Book title is required.'),
-            'writer.required' => __('Writer is required.'),
-            'publisher.required' => __('Publisher is required.'),
-            'year.required' => __('Year is required.'),
-            'ISBN.required' => __('ISBN is required.'),
-            'stock.required' => __('Stock is required.'),
-            'stock.min' => __('Stock cannot be negative.'),
-            'category_id.required' => __('Category is required.'),
-            'cover_image.max' => __('Cover image size must not exceed 2MB.'),
-        ]);
-
-        $data = $request->except('cover_image');
+        $data = $request->validated();
 
         if ($request->hasFile('cover_image')) {
             $path = $request->file('cover_image')->store('covers', 'public');
@@ -62,30 +43,9 @@ class BookController extends Controller
         return view('books.edit', compact('book', 'categories'));
     }
 
-    public function update(Request $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'writer' => 'required|string|max:255',
-            'publisher' => 'required|string|max:255',
-            'year' => 'required|integer|min:1000|max:' . date('Y'),
-            'ISBN' => 'required|string|max:50',
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'title.required' => __('Book title is required.'),
-            'writer.required' => __('Writer is required.'),
-            'publisher.required' => __('Publisher is required.'),
-            'year.required' => __('Year is required.'),
-            'ISBN.required' => __('ISBN is required.'),
-            'stock.required' => __('Stock is required.'),
-            'stock.min' => __('Stock cannot be negative.'),
-            'category_id.required' => __('Category is required.'),
-            'cover_image.max' => __('Cover image size must not exceed 2MB.'),
-        ]);
-
-        $data = $request->except('cover_image');
+        $data = $request->validated();
 
         if ($request->hasFile('cover_image')) {
             // Delete old cover
