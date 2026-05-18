@@ -38,6 +38,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/history', [\App\Http\Controllers\BorrowerCatalogController::class, 'history'])->name('history');
         Route::post('/borrow', [\App\Http\Controllers\BorrowerCatalogController::class, 'reserveBook'])->name('borrow');
         Route::post('/review', [\App\Http\Controllers\BorrowerCatalogController::class, 'storeReview'])->name('review.store');
+        Route::get('/sop', function () {
+            $maxBooks = \App\Models\Setting::get('max_books_allowed', 3);
+            $borrowDuration = \App\Models\Setting::get('standard_borrow_duration', 7);
+            $dailyFine = \App\Models\Setting::get('daily_fine_rate', 1000);
+            return view('peminjam.sop', compact('maxBooks', 'borrowDuration', 'dailyFine'));
+        })->name('sop');
     });
 
     // Core Operations for Admin and Petugas
@@ -48,6 +54,9 @@ Route::middleware('auth')->group(function () {
         Route::post('borrowings/{borrowing}/return', [\App\Http\Controllers\BorrowingController::class, 'returnBook'])->name('borrowings.return');
         Route::get('/management/fines', [\App\Http\Controllers\FineManagementController::class, 'index'])->name('fines.index');
         Route::post('/management/fines/{borrowing}/verify', [\App\Http\Controllers\FineManagementController::class, 'verifyPayment'])->name('fines.verify');
+        Route::get('/management/guide', function () {
+            return view('management.guide');
+        })->name('management.guide');
     });
 });
 
