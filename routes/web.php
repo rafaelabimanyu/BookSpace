@@ -23,13 +23,20 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:petugas')->prefix('petugas')->name('petugas.')->group(function () {
-        // Petugas specific routes (Book CRUD, Circulation)
-        Route::get('/books', function () { return 'Petugas Books Placeholder'; })->name('books');
+        // Petugas specific routes (Circulation etc.)
     });
 
     Route::middleware('role:peminjam')->prefix('peminjam')->name('peminjam.')->group(function () {
         // Peminjam specific routes (Catalog, History)
         Route::get('/catalog', function () { return 'Peminjam Catalog Placeholder'; })->name('catalog');
+    });
+
+    // Core Operations for Admin and Petugas
+    Route::middleware('role:admin,petugas')->group(function () {
+        Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+        Route::resource('books', \App\Http\Controllers\BookController::class);
+        Route::resource('borrowings', \App\Http\Controllers\BorrowingController::class)->only(['index', 'create', 'store']);
+        Route::post('borrowings/{borrowing}/return', [\App\Http\Controllers\BorrowingController::class, 'returnBook'])->name('borrowings.return');
     });
 });
 
