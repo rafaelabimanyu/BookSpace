@@ -1,11 +1,27 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@layer base {
+    body {
+        @apply bg-bg-cream text-text-charcoal font-sans antialiased;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-display;
+    }
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@layer components {
+    .btn-primary {
+        @apply inline-flex items-center justify-center px-6 py-3 bg-primary-rose border border-transparent rounded-2xl font-display font-semibold text-white uppercase tracking-widest hover:bg-rose-400 active:bg-rose-500 focus:outline-none focus:ring-2 focus:ring-primary-rose focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm hover:shadow-md;
+    }
+    .btn-secondary {
+        @apply inline-flex items-center justify-center px-6 py-3 bg-secondary-blush border border-primary-rose rounded-2xl font-display font-semibold text-primary-rose uppercase tracking-widest hover:bg-rose-50 active:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-primary-rose focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm hover:shadow-md;
+    }
+    .card {
+        @apply bg-white rounded-3xl shadow-sm border border-secondary-blush overflow-hidden;
+    }
+    .input-field {
+        @apply border-secondary-blush focus:border-primary-rose focus:ring-primary-rose rounded-2xl shadow-sm block w-full text-text-charcoal bg-white;
+    }
 }
