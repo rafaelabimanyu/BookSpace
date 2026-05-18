@@ -49,6 +49,11 @@
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     {{ __('Borrowings') }}
                 </a>
+
+                <a href="{{ route('fines.index') }}" class="flex items-center px-4 py-3 rounded-2xl font-bold transition {{ Request::routeIs('fines.*') ? 'bg-white shadow-sm text-primary-rose' : 'text-text-charcoal hover:bg-white/50 hover:text-primary-rose' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    {{ __('Fines Management') }}
+                </a>
             @endif
 
             @if(auth()->user()->role === 'peminjam')
@@ -79,9 +84,19 @@
             @endif
 
             @if(auth()->user()->role === 'admin')
+                <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-3 rounded-2xl font-bold transition {{ Request::routeIs('admin.users.*') ? 'bg-white shadow-sm text-primary-rose' : 'text-text-charcoal hover:bg-white/50 hover:text-primary-rose' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    {{ __('User Management') }}
+                </a>
+
                 <a href="{{ route('admin.reports') }}" class="flex items-center px-4 py-3 rounded-2xl font-bold transition {{ Request::routeIs('admin.reports') ? 'bg-white shadow-sm text-primary-rose' : 'text-text-charcoal hover:bg-white/50 hover:text-primary-rose' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path></svg>
                     {{ __('Reports') }}
+                </a>
+
+                <a href="{{ route('admin.settings.index') }}" class="flex items-center px-4 py-3 rounded-2xl font-bold transition {{ Request::routeIs('admin.settings.*') ? 'bg-white shadow-sm text-primary-rose' : 'text-text-charcoal hover:bg-white/50 hover:text-primary-rose' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    {{ __('System Settings') }}
                 </a>
             @endif
         </nav>
@@ -100,19 +115,24 @@
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col h-screen overflow-y-auto">
         <!-- Top Header -->
-        <header class="h-20 bg-white/50 backdrop-blur-md border-b border-secondary-blush flex items-center justify-between px-8 z-10 sticky top-0">
+        <header class="h-20 bg-white/60 backdrop-blur-md border-b border-secondary-blush/40 flex items-center justify-between px-8 z-10 sticky top-0 shadow-xs">
             <div class="flex items-center gap-4">
-                <span class="text-lg font-display font-semibold text-text-charcoal">@yield('header_title')</span>
-                <span class="px-3 py-1 bg-secondary-blush text-primary-rose text-xs font-bold uppercase tracking-wider rounded-xl">{{ __(ucfirst(auth()->user()->role)) }}</span>
+                <h2 class="text-lg font-display font-bold text-text-charcoal">@yield('header_title', __('Dashboard'))</h2>
             </div>
 
             <div class="flex items-center gap-6">
+                <!-- User Greeting & Role Badge -->
+                <span class="font-body font-bold text-text-charcoal text-sm">{{ __('Hello, :name', ['name' => auth()->user()->name]) }}</span>
+                <span class="rounded-full px-3 py-1 text-[10px] font-extrabold text-primary-rose bg-secondary-blush border border-primary-rose/30 uppercase tracking-widest shadow-xs">
+                    {{ __(ucfirst(auth()->user()->role)) }}
+                </span>
+
                 <!-- Language Switcher -->
-                <div class="flex items-center bg-white rounded-2xl shadow-sm border border-secondary-blush p-1">
-                    <a href="{{ route('locale.switch', 'en') }}" class="px-3 py-1 rounded-xl text-sm font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 {{ app()->getLocale() === 'en' ? 'bg-primary-rose text-white shadow-sm font-bold' : 'text-text-charcoal hover:bg-secondary-blush/60 hover:text-primary-rose' }}">
+                <div class="flex items-center bg-white/95 rounded-full shadow-xs border border-secondary-blush/60 p-1">
+                    <a href="{{ route('locale.switch', 'en') }}" class="px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 transform hover:scale-105 active:scale-95 {{ app()->getLocale() === 'en' ? 'bg-primary-rose text-white shadow-xs font-bold' : 'text-text-charcoal hover:bg-secondary-blush/60 hover:text-primary-rose' }}">
                         EN
                     </a>
-                    <a href="{{ route('locale.switch', 'id') }}" class="px-3 py-1 rounded-xl text-sm font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 {{ app()->getLocale() === 'id' ? 'bg-primary-rose text-white shadow-sm font-bold' : 'text-text-charcoal hover:bg-secondary-blush/60 hover:text-primary-rose' }}">
+                    <a href="{{ route('locale.switch', 'id') }}" class="px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 transform hover:scale-105 active:scale-95 {{ app()->getLocale() === 'id' ? 'bg-primary-rose text-white shadow-xs font-bold' : 'text-text-charcoal hover:bg-secondary-blush/60 hover:text-primary-rose' }}">
                         ID
                     </a>
                 </div>

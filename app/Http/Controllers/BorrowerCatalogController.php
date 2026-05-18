@@ -10,6 +10,7 @@ use App\Http\Requests\ReserveBookRequest;
 use App\Http\Requests\StoreReviewRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Setting;
 
 class BorrowerCatalogController extends Controller
 {
@@ -56,6 +57,16 @@ class BorrowerCatalogController extends Controller
             return back()->with('error', __('This book is currently out of stock!'));
         }
 
+        // Check dynamic checkout limit
+        $activeBorrowingsCount = Borrowing::where('user_id', $userId)
+            ->where('status', 'borrowed')
+            ->count();
+        $maxBooksAllowed = (int)Setting::get('max_books_allowed', 3);
+
+        if ($activeBorrowingsCount >= $maxBooksAllowed) {
+            return back()->with('error', __('You have reached the maximum borrow limit of :limit books!', ['limit' => $maxBooksAllowed]));
+        }
+
         // Check if the user is already borrowing an active copy of this exact book
         $alreadyBorrowed = Borrowing::where('user_id', $userId)
             ->where('book_id', $bookId)
@@ -68,12 +79,13 @@ class BorrowerCatalogController extends Controller
 
         // Database transaction
         try {
-            DB::transaction(function () use ($book, $userId) {
+            $durationDays = (int)Setting::get('default_borrow_duration', 7);
+            DB::transaction(function () use ($book, $userId, $durationDays) {
                 Borrowing::create([
                     'user_id' => $userId,
                     'book_id' => $book->id,
                     'borrow_date' => now(),
-                    'return_date' => now()->addDays(7),
+                    'return_date' => now()->addDays($durationDays),
                     'status' => 'borrowed',
                 ]);
 
@@ -164,15 +176,17 @@ class BorrowerCatalogController extends Controller
     public function fines()
     {
         $borrowings = auth()->user()->borrowings()->with('book')->latest()->get();
+        $dailyFineRate = (double)Setting::get('daily_fine_rate', 1000);
+        $durationDays = (int)Setting::get('default_borrow_duration', 7);
         
-        $borrowings->transform(function ($borrowing) {
+        $borrowings->transform(function ($borrowing) use ($dailyFineRate, $durationDays) {
             if ($borrowing->status === 'borrowed') {
                 $today = now()->startOfDay();
                 $deadline = \Illuminate\Support\Carbon::parse($borrowing->return_date)->startOfDay();
                 
                 if ($today->gt($deadline)) {
                     $daysLate = abs($today->diffInDays($deadline));
-                    $borrowing->calculated_fine = $daysLate * 1000; // Rp 1,000 per day
+                    $borrowing->calculated_fine = $daysLate * $dailyFineRate;
                     $borrowing->days_late = $daysLate;
                 } else {
                     $borrowing->calculated_fine = 0;
@@ -182,7 +196,7 @@ class BorrowerCatalogController extends Controller
                 $borrowing->calculated_fine = $borrowing->fine_amount;
                 
                 // Calculate actual returned late days
-                $deadline = \Illuminate\Support\Carbon::parse($borrowing->created_at)->addDays(7)->startOfDay();
+                $deadline = \Illuminate\Support\Carbon::parse($borrowing->created_at)->addDays($durationDays)->startOfDay();
                 $actualReturn = \Illuminate\Support\Carbon::parse($borrowing->return_date)->startOfDay();
                 
                 if ($actualReturn->gt($deadline)) {
@@ -201,6 +215,8 @@ class BorrowerCatalogController extends Controller
     {
         // Calculate the fine if active, otherwise use persisted denda
         $fineAmount = $borrowing->fine_amount;
+        $dailyFineRate = (double)Setting::get('daily_fine_rate', 1000);
+        $durationDays = (int)Setting::get('default_borrow_duration', 7);
         
         if ($borrowing->status === 'borrowed') {
             $today = now()->startOfDay();
@@ -208,18 +224,18 @@ class BorrowerCatalogController extends Controller
             
             if ($today->gt($deadline)) {
                 $daysLate = abs($today->diffInDays($deadline));
-                $fineAmount = $daysLate * 1000;
+                $fineAmount = $daysLate * $dailyFineRate;
             }
         } else {
             // Persisted
             if ($fineAmount <= 0) {
                 // Check if they returned late and have unpaid fine
-                $deadline = \Illuminate\Support\Carbon::parse($borrowing->created_at)->addDays(7)->startOfDay();
+                $deadline = \Illuminate\Support\Carbon::parse($borrowing->created_at)->addDays($durationDays)->startOfDay();
                 $actualReturn = \Illuminate\Support\Carbon::parse($borrowing->return_date)->startOfDay();
                 
                 if ($actualReturn->gt($deadline)) {
                     $daysLate = abs($actualReturn->diffInDays($deadline));
-                    $fineAmount = $daysLate * 1000;
+                    $fineAmount = $daysLate * $dailyFineRate;
                 }
             }
         }

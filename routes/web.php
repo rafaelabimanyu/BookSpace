@@ -17,6 +17,9 @@ Route::middleware('auth')->group(function () {
     // Role-based Route Groups
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports');
+        Route::resource('users', \App\Http\Controllers\UserController::class)->except(['create', 'edit', 'show']);
+        Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [\App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
     });
 
     Route::middleware('role:petugas')->prefix('petugas')->name('petugas.')->group(function () {
@@ -43,6 +46,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('books', \App\Http\Controllers\BookController::class);
         Route::resource('borrowings', \App\Http\Controllers\BorrowingController::class)->only(['index', 'create', 'store']);
         Route::post('borrowings/{borrowing}/return', [\App\Http\Controllers\BorrowingController::class, 'returnBook'])->name('borrowings.return');
+        Route::get('/management/fines', [\App\Http\Controllers\FineManagementController::class, 'index'])->name('fines.index');
+        Route::post('/management/fines/{borrowing}/verify', [\App\Http\Controllers\FineManagementController::class, 'verifyPayment'])->name('fines.verify');
     });
 });
 
