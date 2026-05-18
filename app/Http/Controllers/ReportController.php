@@ -52,11 +52,20 @@ class ReportController extends Controller
             : 100;
 
         $categories = Category::all();
-        $yearsList = Borrowing::selectRaw('YEAR(borrow_date) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year')
-            ->toArray();
+        $yearsList = [];
+        if (\Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite') {
+            $yearsList = Borrowing::selectRaw("strftime('%Y', borrow_date) as year")
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year')
+                ->toArray();
+        } else {
+            $yearsList = Borrowing::selectRaw('YEAR(borrow_date) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year')
+                ->toArray();
+        }
 
         return view('admin.reports', compact(
             'borrowings',
