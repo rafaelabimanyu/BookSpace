@@ -151,7 +151,7 @@
 
         <!-- Main Content Area -->
         <main class="flex-1 p-8">
-            <div class="animate-fade-in-up">
+            <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in-up">
                 @yield('content')
             </div>
         </main>

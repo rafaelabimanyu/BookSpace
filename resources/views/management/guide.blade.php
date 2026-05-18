@@ -5,10 +5,10 @@
 @section('header_title', __('System Guide'))
 
 @section('content')
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start w-full animate-fade-in-up">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start w-full">
     
-    <!-- Sticky Quick Navigation Index (Col 1 on desktop) -->
-    <div class="lg:col-span-1 lg:sticky lg:top-24 z-20">
+    <!-- Sticky Quick Navigation Index (Col 1) -->
+    <aside class="lg:col-span-1 sticky top-24 hidden lg:block z-20">
         <div class="p-6 bg-white/75 border border-primary-rose/25 shadow-xl shadow-rose-100/30 rounded-3xl backdrop-blur-md transition-premium hover:shadow-2xl">
             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 font-display flex items-center gap-2">
                 <span>📍</span> {{ __('Quick Navigation') }}
@@ -45,10 +45,10 @@
                 @endif
             </nav>
         </div>
-    </div>
+    </aside>
 
-    <!-- Main Content Area (Col 3 on desktop) -->
-    <div class="lg:col-span-3 space-y-8 w-full">
+    <!-- Main Content Area (Col 3) -->
+    <main class="col-span-1 lg:col-span-3 space-y-8">
         
         <!-- Header Hero Banner -->
         <div class="relative overflow-hidden bg-gradient-to-r from-secondary-blush/70 via-white/80 to-white p-8 rounded-3xl border border-primary-rose/25 shadow-xl shadow-rose-100/30 backdrop-blur-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 transition-premium hover:shadow-2xl">
@@ -216,6 +216,6 @@
             </div>
         @endif
 
-    </div>
+    </main>
 </div>
 @endsection
