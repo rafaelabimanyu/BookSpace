@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/logo.png') }}">
 
     <title>BookSpace</title>
 
@@ -21,12 +22,10 @@
 <body class="bg-bg-cream text-text-charcoal font-sans antialiased min-h-screen flex flex-col">
     <!-- Header -->
     <header class="w-full py-6 px-8 flex justify-between items-center relative z-10">
-        <div class="flex items-center gap-2">
-            <svg class="w-8 h-8 text-primary-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-            </svg>
+        <a href="/" class="flex items-center gap-3 transition-transform duration-300 hover:scale-105 active:scale-95">
+            <img src="{{ asset('assets/img/logo.png') }}" alt="BookSpace Logo" class="w-10 h-10 object-contain">
             <span class="font-display font-bold text-2xl text-primary-rose tracking-wide">BookSpace</span>
-        </div>
+        </a>
         <div class="flex items-center gap-6">
             <!-- Language Switcher -->
             <div class="flex items-center bg-white rounded-2xl shadow-sm border border-secondary-blush p-1">

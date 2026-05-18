@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/logo.png') }}">
 
     <title>{{ config('app.name', 'BookSpace') }} - Login</title>
 
@@ -22,7 +23,10 @@
     <div class="absolute bottom-1/4 right-10 w-32 h-32 bg-rose-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
 
     <div class="card p-10 max-w-md w-full relative backdrop-blur-sm bg-white/90 border-white/40 shadow-xl z-10">
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 flex flex-col items-center">
+            <a href="/" class="mb-4 inline-block transition-transform duration-300 hover:scale-105 active:scale-95">
+                <img src="{{ asset('assets/img/logo.png') }}" alt="BookSpace Logo" class="w-20 h-20 object-contain">
+            </a>
             <h1 class="text-4xl font-display font-bold text-primary-rose mb-2">BookSpace</h1>
             <p class="text-gray-500 font-medium">{{ __('Login to your account') }}</p>
         </div>
